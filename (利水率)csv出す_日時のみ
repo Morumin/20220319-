@@ -1,0 +1,71 @@
+from datetime import date
+from japanera import Japanera, EraDate
+import numpy as np
+import pandas as pd
+
+janera = Japanera()
+
+c_era = janera.era(date.today())
+
+year_list = np.arange(1955,2022)
+month_list = np.arange(1,13)
+
+year_month_list = []
+
+for ly in year_list:
+    for lm in month_list:
+        for ld in [1,2,3,4,5,6]:
+            era_date = EraDate(ly, lm, ld)
+            era_date_ly = era_date.strftime("%-E%-O年%m月%d")
+            year_month_list.append(era_date_ly)
+            
+dflist= []
+
+for i,yml in enumerate(year_month_list):
+    year_slice = yml[:5]
+    month_slice = yml[-5:-2]
+    Half_season_slice =yml[-1:]
+    df = pd.DataFrame(data={"年": year_slice,"月": month_slice,"半旬": Half_season_slice},index=[i,] )   
+    dflist.append(df)
+df = pd.concat(dflist)
+df.to_csv('year_month_list.csv',index=False,encoding='cp932')
+
+df = pd.read_csv('year_month_list.csv',encoding='cp932')
+
+
+year_blank_list = []
+
+for i in range(len(df)):
+    if df.iat[i,0] != df.iat[i-1,0]:
+        year_blank_list.append(df.iat[i,0])
+    elif df.iat[i,0] == df.iat[i-1,0]:
+        year_blank_list.append('')
+
+month_blank_list = []
+
+for i in range(len(df)):
+    if df.iat[i,1] != df.iat[i-1,1]:
+        month_blank_list.append(df.iat[i,1])
+    elif df.iat[i,1] == df.iat[i-1,1]:
+        month_blank_list.append('')
+
+ybl_mbl_list = []
+
+for i,(ybl,mbl,hbl)in enumerate(zip(year_blank_list,month_blank_list,[1,2,3,4,5,6]*i)):
+    df = pd.DataFrame(data={"年": ybl ,"月": mbl,"半旬": hbl},index=[i,] )  
+    ybl_mbl_list.append(df)
+
+df = pd.concat(ybl_mbl_list)
+df.to_csv('year_month_list2.csv',index=False,encoding='cp932')
+
+
+    
+
+
+
+
+
+    
+        
+        
+
