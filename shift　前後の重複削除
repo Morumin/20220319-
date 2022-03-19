@@ -1,0 +1,6 @@
+df = pd.read_csv('year_month_list.csv',encoding='cp932')
+
+print(df[df['年']!= df['年'].shift(1)])
+
+前後の重複を
+行ごと削除
