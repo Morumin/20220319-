@@ -1,0 +1,26 @@
+import pandas as pd
+import numpy as np
+import glob
+
+df = pd.read_csv('0320_henkei_elucidate.csv', header=None,encoding='cp932')
+
+year_list=np.arange(1946,1950)
+
+df_list=[[] for x in range(len(year_list))]
+df_1 =[[] for x in range(len(year_list))]
+
+for i in range(len(year_list)):  
+    for j in range(df.shape[1]):
+        df_list[i].append(df.iloc[i*32:i*32+1+31,j])       
+    df_1[i]=pd.concat(df_list[i],axis=0)   
+    df_1[i].dropna(inplace=True)
+    df_1[i].to_csv(f'test_{year_list[i]}_se.csv',index=False)  
+    
+
+all_files = glob.glob('*_se.csv')  
+csv_all = []
+
+for f in all_files:
+    csv_all.append(pd.read_csv(f))   
+df=pd.concat(csv_all,axis=1)
+df.to_csv('test_all.csv',index=False) 
