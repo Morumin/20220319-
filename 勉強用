@@ -1,0 +1,3 @@
+geopandas
+from mpl_toolkits.basemap import Basemap
+pyproj
