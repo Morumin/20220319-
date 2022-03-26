@@ -1,8 +1,8 @@
 
 import win32com.client
 
-load_file = 'C:\\Users\\IMF\\Desktop\\Python\\李さん転記作業用\\転記する内容のデータ.xlsx'
-copy_file = 'C:\\Users\\IMF\\Desktop\\Python\\李さん転記作業用\\転記先のファイル_画像あり_これを複製する - コピー.xlsm'
+load_file = 'C:\\絶対パスでかく\\Python\\李さん転記作業用\\転記する内容のデータ.xlsx'
+copy_file = 'C:\\絶対パスでかく\\李さん転記作業用\\転記先のファイル_画像あり_これを複製する - コピー.xlsm'
 
 app = win32com.client.Dispatch("Excel.Application")
 app.Visible =  1 
@@ -13,11 +13,12 @@ load_sheet = load_wb.Worksheets(1)
 copy_sheet = copy_wb.Worksheets(1)
 
 load_sheet.Activate()
-copy_sheet.Activate()
+copy_sheet.Activate()　#ここまではおまじない的な
 
-copy_sheet.Range("S3").Value = load_sheet.Range("B9").Value
 
-app.DisplayAlerts = False 
+copy_sheet.Cells(3,19).Value =  '零点高TP   ' +str(load_sheet.Cells(9,2).Value)+'m' #str大事
+
+app.DisplayAlerts = False 　#閉じるときとかにwarning出さない
 
 copy_wb.Save()
 
