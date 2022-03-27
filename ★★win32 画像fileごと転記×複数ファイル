@@ -2,11 +2,11 @@ import win32com.client
 import os
 xlToLeft  = -4159
 
-load_file = 'C:\\\\転記する内容のデータ.xlsx'　#絶対パスじゃないとエラー
-copy_file = 'C:\\\\転記先のファイル_画像あり_これを複製する - コピー.xlsx'
+load_file = 'C:\\転記する内容のデータ.xlsx'#絶対パスじゃないとエラー
+copy_file = 'C:\\転記先のファイル_画像あり_これを複製する - コピー.xlsx'
 
 app = win32com.client.Dispatch("Excel.Application")
-app.Visible =  1 　　#0にする
+app.Visible =  1 #0にする
 load_wb = app.Workbooks.Open(load_file)
 copy_wb = app.Workbooks.Open(copy_file) 
 
@@ -20,8 +20,8 @@ row_num = load_sheet.Cells(1, load_sheet.Columns.Count).End(xlToLeft).Column
 
 for i in range(1,row_num):
     new_wb = app.Workbooks.Add()
-    new_sheet = new_wb.Worksheets.Add()
-    new_sheet.Activate()
+    new_sheet = new_wb.Worksheets(1) #.Add()にすると二つできるので注意
+    new_wb.Activate()
 
     copy_sheet.Cells(5,19).Value =  'Flood danger water level ' +str(load_sheet.Cells(7,1+i).Value)+'m'
     copy_sheet.Cells(4,19).Value =  'Planned high water level  ' +str(load_sheet.Cells(8,1+i).Value)+'m'
@@ -31,8 +31,11 @@ for i in range(1,row_num):
     water_level_observatory = load_sheet.Cells(2,1+i).Value
 
     copy_sheet.Range("A1:S27").Copy(Destination=new_sheet.Range("A1:S27")) #シートごとコピーする範囲設定
-
-    new_wb.SaveAs(f"{os.getcwd()}\\0{i}_{river_name}_{water_level_observatory}.xlsx")　#現在のファイル直下に置く
+    
+    if len(str(i)) == 2:  #strにしないとtype?エラー
+        new_wb.SaveAs(f"{os.getcwd()}\\{i}_{river_name}_{water_level_observatory}.xlsx")#現在のファイル直下に置く
+    else:
+        new_wb.SaveAs(f"{os.getcwd()}\\0{i}_{river_name}_{water_level_observatory}.xlsx")   
 
     app.DisplayAlerts = False 
 
