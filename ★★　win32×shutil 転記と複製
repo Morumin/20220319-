@@ -1,0 +1,49 @@
+import win32com.client
+import os
+import shutil
+xlToLeft  = -4159
+
+load_file = 'C:\\転記する内容のデータ.xlsx'
+copy_file = 'C:\\転記先のファイル_画像あり_これを複製する - コピー.xlsx'
+
+app = win32com.client.Dispatch("Excel.Application")
+app.Visible =  1 
+load_wb = app.Workbooks.Open(load_file)
+copy_wb = app.Workbooks.Open(copy_file) 
+
+load_sheet = load_wb.Worksheets(1)
+copy_sheet = copy_wb.Worksheets(1)
+
+load_sheet.Activate()
+copy_sheet.Activate()
+
+row_num = load_sheet.Cells(1, load_sheet.Columns.Count).End(xlToLeft).Column
+
+for i in range(1,3):    
+    
+    new_file = shutil.copyfile('転記先のファイル_画像あり_これを複製する - コピー.xlsx','new_wb.xlsx')
+    new_file = 'C:\\new_wb.xlsx'
+    new_wb = app.Workbooks.Open(new_file)
+    new_sheet = new_wb.Worksheets(1) #.Add()にすると二つできるので注意
+    new_wb.Activate()    
+    
+    copy_sheet.Cells(5,19).Value =  'ーーーー ' +str(load_sheet.Cells(7,1+i).Value)+'m'
+    copy_sheet.Cells(4,19).Value =  'ーー  ' +str(load_sheet.Cells(8,1+i).Value)+'m'
+    copy_sheet.Cells(3,19).Value =  'ーー   ' +str(load_sheet.Cells(9,1+i).Value)+'m'
+
+    river_name = load_sheet.Cells(3,1+i).Value
+    water_level_observatory = load_sheet.Cells(2,1+i).Value
+    
+    if len(str(i)) == 2:  #strにしないとtype?エラー
+        new_wb.SaveAs(f"{os.getcwd()}\\{i}_{river_name}_{water_level_observatory}.xlsx")#現在のファイル直下に置く
+    else:
+        new_wb.SaveAs(f"{os.getcwd()}\\0{i}_{river_name}_{water_level_observatory}.xlsx")   
+
+    app.DisplayAlerts = False 
+
+    new_wb.Close()
+
+copy_wb.Close()
+load_wb.Close(SaveChanges = False)
+
+app.Quit()
